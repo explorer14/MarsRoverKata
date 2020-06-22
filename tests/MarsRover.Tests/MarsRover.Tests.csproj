@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MarsRover.ConsoleApp\MarsRover.ConsoleApp.csproj" />
-    <ProjectReference Include="..\MarsRover.Domain\MarsRover.Domain.csproj" />
+    <ProjectReference Include="..\..\src\MarsRover.ConsoleApp\MarsRover.ConsoleApp.csproj" />
+    <ProjectReference Include="..\..\src\MarsRover.Domain\MarsRover.Domain.csproj" />
   </ItemGroup>
 
 </Project>
