@@ -1,17 +1,20 @@
-﻿using MarsRover.Domain.RoverOperations.Usecases;
+﻿using MarsRover.Domain.RoverOperations.Ports;
+using MarsRover.Domain.RoverOperations.Usecases;
 using System;
 
 namespace MarsRover.ConsoleApp
 {
-    internal class Program
+    public class Program
     {
-        private static void Main(string[] args)
+        public static ITransmitRoverPosition TransmitterToUse { get; set; }
+
+        public static void Main(string[] args)
         {
             try
             {
                 var roverOpertionUsecase = new RoverOperationUsecase(
                     new CommandLineInputParser(args),
-                    new ConsoleTransmitter());
+                    TransmitterToUse);
 
                 roverOpertionUsecase.StartRoverOperation().Wait();
             }
