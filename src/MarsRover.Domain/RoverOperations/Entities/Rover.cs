@@ -75,33 +75,20 @@ namespace MarsRover.Domain.RoverOperations.Entities
         /// </summary>
         public CurrentRoverPosition Move()
         {
-            if (NewHeading == Direction.North)
-            {
-                if (NewPositionY + 1 > terrain.MaxY)
-                    throw new InvalidOperationException(
-                        $"Rover cannot go off terrain @ {NewPositionX},{NewPositionY}");
+            TryMoveNorth();
+            TryMoveEast();
+            TryMoveWest();
+            TryMoveSouth();
 
-                NewPositionY++;
-            }
+            return new CurrentRoverPosition(
+                Id,
+                NewPositionX,
+                NewPositionY,
+                NewHeading);
+        }
 
-            if (NewHeading == Direction.East)
-            {
-                if (NewPositionX + 1 > terrain.MaxX)
-                    throw new InvalidOperationException(
-                        $"Rover cannot go off terrain @ {NewPositionX},{NewPositionY}");
-
-                NewPositionX++;
-            }
-
-            if (NewHeading == Direction.West)
-            {
-                if (NewPositionX - 1 < terrain.MinX)
-                    throw new InvalidOperationException(
-                        $"Rover cannot go off terrain @ {NewPositionX},{NewPositionY}");
-
-                NewPositionX--;
-            }
-
+        private void TryMoveSouth()
+        {
             if (NewHeading == Direction.South)
             {
                 if (NewPositionY - 1 < terrain.MinY)
@@ -110,12 +97,42 @@ namespace MarsRover.Domain.RoverOperations.Entities
 
                 NewPositionY--;
             }
+        }
 
-            return new CurrentRoverPosition(
-                Id,
-                NewPositionX,
-                NewPositionY,
-                NewHeading);
+        private void TryMoveWest()
+        {
+            if (NewHeading == Direction.West)
+            {
+                if (NewPositionX - 1 < terrain.MinX)
+                    throw new InvalidOperationException(
+                        $"Rover cannot go off terrain @ {NewPositionX},{NewPositionY}");
+
+                NewPositionX--;
+            }
+        }
+
+        private void TryMoveEast()
+        {
+            if (NewHeading == Direction.East)
+            {
+                if (NewPositionX + 1 > terrain.MaxX)
+                    throw new InvalidOperationException(
+                        $"Rover cannot go off terrain @ {NewPositionX},{NewPositionY}");
+
+                NewPositionX++;
+            }
+        }
+
+        private void TryMoveNorth()
+        {
+            if (NewHeading == Direction.North)
+            {
+                if (NewPositionY + 1 > terrain.MaxY)
+                    throw new InvalidOperationException(
+                        $"Rover cannot go off terrain @ {NewPositionX},{NewPositionY}");
+
+                NewPositionY++;
+            }
         }
 
         /// <summary>
