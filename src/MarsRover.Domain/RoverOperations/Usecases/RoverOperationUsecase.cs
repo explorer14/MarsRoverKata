@@ -2,6 +2,7 @@
 using MarsRover.Domain.RoverOperations.Ports;
 using MarsRover.Domain.RoverOperations.ValueTypes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,11 +24,7 @@ namespace MarsRover.Domain.RoverOperations.Usecases
         public async Task StartRoverOperation()
         {
             var commandsToExecute = await roverCommandRetriever.GetAll();
-
-            if (!commandsToExecute.Any())
-                throw new ArgumentOutOfRangeException(
-                    nameof(commandsToExecute),
-                    "No commands found to execute! Please try again!");
+            EnsureNotEmpty(commandsToExecute);
 
             // Assumption: we are going to operate rovers sequentially
             // i.e. the first rover will execute all its commands, then the next and so on...
@@ -76,6 +73,15 @@ namespace MarsRover.Domain.RoverOperations.Usecases
                     }
                 }
             }
+        }
+
+        private static void EnsureNotEmpty(
+            IReadOnlyCollection<RoverCommandParameters> commandsToExecute)
+        {
+            if (!commandsToExecute.Any())
+                throw new ArgumentOutOfRangeException(
+                    nameof(commandsToExecute),
+                    "No commands found to execute! Please try again!");
         }
     }
 }
