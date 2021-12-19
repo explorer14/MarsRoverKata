@@ -21,23 +21,9 @@ namespace MarsRover.Domain.RoverOperations.Entities
             int startingPositionY,
             Direction startingHeading)
         {
-            if (terrain == null)
-                throw new ArgumentNullException(
-                    nameof(terrain),
-                    "Rover cannot navigate on a non-existent terrain!");
-
-            if (IsStartingPositionOutsideTerrain(
-                    terrain,
-                    startingPositionX,
-                    startingPositionY))
-                throw new ArgumentOutOfRangeException(
-                    $"{nameof(startingPositionX)},{nameof(startingPositionY)}",
-                    "Rover cannot start outside the terrain");
-
-            if (!Enum.IsDefined(typeof(Direction), startingHeading))
-                throw new ArgumentOutOfRangeException(
-                    nameof(startingHeading),
-                    "Starting heading is invalid, must be one of NORTH, EAST, WEST or SOUTH");
+            EnsureRoverIsWithinTerrain(
+                terrain, startingPositionX, startingPositionY);
+            EnsureStartHeadingIsValid(startingHeading);
 
             this.terrain = terrain;
             StartingPositionX = startingPositionX;
@@ -50,6 +36,30 @@ namespace MarsRover.Domain.RoverOperations.Entities
             NewHeading = StartingHeading;
 
             Id = Guid.NewGuid();
+        }
+
+        private static void EnsureStartHeadingIsValid(Direction startingHeading)
+        {
+            if (!Enum.IsDefined(typeof(Direction), startingHeading))
+                throw new ArgumentOutOfRangeException(
+                    nameof(startingHeading),
+                    "Starting heading is invalid, must be one of NORTH, EAST, WEST or SOUTH");
+        }
+
+        private static void EnsureRoverIsWithinTerrain(Terrain terrain, int startingPositionX, int startingPositionY)
+        {
+            if (terrain == null)
+                throw new ArgumentNullException(
+                    nameof(terrain),
+                    "Rover cannot navigate on a non-existent terrain!");
+
+            if (IsStartingPositionOutsideTerrain(
+                    terrain,
+                    startingPositionX,
+                    startingPositionY))
+                throw new ArgumentOutOfRangeException(
+                    $"{nameof(startingPositionX)},{nameof(startingPositionY)}",
+                    "Rover cannot start outside the terrain");
         }
 
         public CurrentRoverPosition GetCurrentPosition() =>
