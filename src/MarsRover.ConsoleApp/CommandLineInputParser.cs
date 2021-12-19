@@ -80,19 +80,35 @@ namespace MarsRover.ConsoleApp
         }
 
         private static (int initialX, int initialY, string initialHeading) GetInitialRoverPosition(
-            string roverPosition,
+            string inputRoverPosition,
             Terrain terrain)
         {
-            if (!Regex.IsMatch(roverPosition, roverPosPattern))
-                throw new ArgumentOutOfRangeException(
-                    nameof(roverPosition),
-                    "Rover position not valid! Syntax is x<whitespace>y<whitspace>N|E|W|S and only positive coordinates");
+            EnsureRoverPositionIsValid(inputRoverPosition);
 
-            var roverPos = Regex.Split(roverPosition, @"\s");
+            (int X, int Y, string Heading) initialRoverPosition = GetInitialRoverPositionFromInput(
+                inputRoverPosition);
+
+            EnsureInitialRoverPositionWithinTerrain(
+                terrain, initialRoverPosition);
+
+            return initialRoverPosition;
+        }
+
+        private static (int X, int Y, string Heading) GetInitialRoverPositionFromInput(
+            string inputRoverPosition)
+        {
+            var roverPos = Regex.Split(inputRoverPosition, @"\s");
 
             (int X, int Y, string Heading) initialRoverPosition =
                 (int.Parse(roverPos[0]), int.Parse(roverPos[1]), roverPos[2].ToUpper());
 
+            return initialRoverPosition;
+        }
+
+        private static void EnsureInitialRoverPositionWithinTerrain(
+            Terrain terrain, 
+            (int X, int Y, string Heading) initialRoverPosition)
+        {
             // directions
             // Assumptions:
             // a. rover never moves diagonally, only along one axis
@@ -106,8 +122,14 @@ namespace MarsRover.ConsoleApp
                     nameof(initialRoverPosition),
                     $"Rover cannot start outside the terrain" +
                     $" @ ({initialRoverPosition.X},{initialRoverPosition.Y})");
+        }
 
-            return initialRoverPosition;
+        private static void EnsureRoverPositionIsValid(string roverPosition)
+        {
+            if (!Regex.IsMatch(roverPosition, roverPosPattern))
+                throw new ArgumentOutOfRangeException(
+                    nameof(roverPosition),
+                    "Rover position not valid! Syntax is x<whitespace>y<whitspace>N|E|W|S and only positive coordinates");
         }
 
         private RoverCommands[] GetMovementSequence(string commandSequenceString)
